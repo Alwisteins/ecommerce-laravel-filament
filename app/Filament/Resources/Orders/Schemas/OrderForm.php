@@ -135,7 +135,7 @@ class OrderForm
 
                         Placeholder::make('grand_total')
                         ->label('Grand Total')
-                        ->content(function (Get $get) {
+                        ->content(function (Get $get, Set $set) {
                             $total = 0;
 
                             if ($repeaters = $get('items')) {
@@ -143,11 +143,13 @@ class OrderForm
                                     $total += $get("items.{$key}.total_amount") ?? 0;
                                 }
                             }
+                            $set('grand_total', $total);
 
                             return Number::currency($total, 'IDR');
                         }),
                         
                         Hidden::make('grand_total')
+                        ->dehydrated()
                         ->default(0),
                     ])
                 ])->columnSpanFull()
