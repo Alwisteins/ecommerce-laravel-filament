@@ -14,6 +14,7 @@ use App\Livewire\ProductDetailPage;
 use App\Livewire\ProductsPage;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', HomePage::class);
 Route::get('/categories', CategoriesPage::class);
@@ -40,5 +41,15 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/password', 'settings.password')->name('settings.password');
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 });
+
+// Buat akses ke file private. P.S.: Laravel dan antek-anteknya membagongkan
+Route::get('/private/{path}', function ($path) {
+    $file = Storage::disk('private')->path($path);
+    abort_unless(file_exists($file), 404);
+
+    return response()->file($file);
+})->where('path', '.*')->name('private.file');
+
+
 
 require __DIR__.'/auth.php';
